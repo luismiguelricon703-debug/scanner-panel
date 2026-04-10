@@ -188,38 +188,26 @@ function renderPage(title, content) {
 }
 
 // ======================
-// RUTAS PÚBLICAS
+// RUTAS HTML EN RAIZ
 // ======================
 app.get("/", (req, res) => {
-  res.send(
-    renderPage(
-      "Inicio",
-      `
-      <div class="center-wrap">
-        <div class="pro-card hero-card">
-          <div class="hero-badge">Scanner Platform</div>
-          <h1 class="hero-title">Panel de Verificación</h1>
-          <p class="hero-subtitle">
-            Plataforma privada para gestión de escaneos, control de clientes y seguimiento de resultados.
-          </p>
-
-          <div class="actions center-actions">
-            <a class="btn" href="/login">Iniciar sesión</a>
-            <a class="btn btn-secondary" href="/register">Crear cuenta</a>
-          </div>
-        </div>
-      </div>
-      `
-    )
-  );
-});
-
-app.get("/register", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "register.html"));
+  res.sendFile(path.join(__dirname, "login.html"));
 });
 
 app.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "login.html"));
+  res.sendFile(path.join(__dirname, "login.html"));
+});
+
+app.get("/register", (req, res) => {
+  res.sendFile(path.join(__dirname, "register.html"));
+});
+
+app.get("/dashboard-page", (req, res) => {
+  res.sendFile(path.join(__dirname, "dashboard.html"));
+});
+
+app.get("/admin-page", (req, res) => {
+  res.sendFile(path.join(__dirname, "admin.html"));
 });
 
 // ======================
@@ -391,7 +379,7 @@ app.get("/logout", (req, res) => {
 });
 
 // ======================
-// DASHBOARD CLIENTE
+// DASHBOARD
 // ======================
 app.get("/dashboard", auth, (req, res) => {
   db.get(
@@ -1385,7 +1373,7 @@ app.post("/admin/actualizar-scan", adminOnly, (req, res) => {
 });
 
 // ======================
-// HACER OWNER (TEMPORAL)
+// HACER OWNER
 // ======================
 app.get("/hacer-owner", (req, res) => {
   const email = "rinconpinol@gmail.com";
@@ -1408,7 +1396,7 @@ app.get("/hacer-owner", (req, res) => {
 });
 
 // ======================
-// START SERVER
+// SERVER
 // ======================
 app.listen(PORT, () => {
   console.log(`Servidor activo en http://localhost:${PORT}`);
