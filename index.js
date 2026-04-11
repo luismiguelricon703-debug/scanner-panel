@@ -1376,12 +1376,10 @@ app.post("/admin/actualizar-scan", adminOnly, (req, res) => {
 // HACER OWNER
 // ======================
 app.get("/hacer-owner", (req, res) => {
-  // Verificar si está logueado
   if (!req.session.userId) {
-    return res.send("❌ No estás logueado. Inicia sesión primero.");
+    return res.send("❌ No estás logueado");
   }
 
-  // Convertir al usuario actual en owner
   db.run(
     `UPDATE users SET role = 'owner' WHERE id = ?`,
     [req.session.userId],
@@ -1390,11 +1388,29 @@ app.get("/hacer-owner", (req, res) => {
         return res.send("❌ Error poniendo owner: " + err.message);
       }
 
-      if (this.changes === 0) {
-        return res.send("❌ No se encontró el usuario");
-      }
+      res.send(`
+        <html lang="es">
+        <head>
+          <meta charset="UTF-8">
+          <title>Owner activado</title>
+          <link rel="stylesheet" href="/styles.css">
+        </head>
+        <body>
+          <div class="center-wrap">
+            <div class="pro-card small-card">
+              <div class="hero-badge">Acceso avanzado</div>
+              <h1>🔥 Ahora eres OWNER 🔥</h1>
+              <p class="muted">Ya puedes entrar al panel admin</p>
 
-      res.send("✅ Ahora eres OWNER 😈");
+              <div class="actions" style="margin-top:20px;">
+                <a class="btn" href="/admin-page">Ir al Admin</a>
+                <a class="btn btn-secondary" href="/dashboard">Volver</a>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `);
     }
   );
 });
