@@ -486,3 +486,181 @@ input[type="password"] {
   width: 100%;
   background: linear-gradient(90deg, #eab308, #f59e0b);
 }
+.external-scan-card {
+  max-width: 920px;
+}
+
+.external-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.external-status {
+  display: flex;
+  align-items: center;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.status-pending {
+  background: rgba(148, 163, 184, 0.16);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.status-processing {
+  background: rgba(59, 130, 246, 0.16);
+  color: #93c5fd;
+  border: 1px solid rgba(96, 165, 250, 0.2);
+}
+
+.status-review {
+  background: rgba(245, 158, 11, 0.16);
+  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.status-complete {
+  background: rgba(34, 197, 94, 0.16);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.scan-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.scan-info-card {
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.scan-progress-card {
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 18px;
+  padding: 18px;
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #cbd5e1;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.progress-bar-pro {
+  width: 100%;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-fill-pro {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.progress-animate-pro {
+  width: 65%;
+  background: linear-gradient(90deg, #2563eb, #38bdf8, #8b5cf6);
+  background-size: 200% 100%;
+  animation: movingBarPro 2s linear infinite;
+}
+
+.progress-review-pro {
+  width: 100%;
+  background: linear-gradient(90deg, #eab308, #f59e0b);
+}
+
+.progress-complete-pro {
+  width: 100%;
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+}
+
+.progress-message {
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.scan-instructions-pro {
+  margin-top: 18px;
+}
+
+.logs-wrapper {
+  margin-top: 20px;
+}
+
+.logs-title {
+  color: #e5e7eb;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.scan-logs {
+  background: rgba(2, 6, 23, 0.65);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 14px;
+  padding: 14px;
+  min-height: 110px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.log-line {
+  font-family: monospace;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.log-line.success {
+  color: #86efac;
+}
+
+.log-line.warning {
+  color: #fcd34d;
+}
+
+.log-line.neutral {
+  color: #cbd5e1;
+}
+
+.start-btn {
+  min-width: 180px;
+}
+
+@keyframes movingBarPro {
+  0% {
+    transform: translateX(-30%);
+    background-position: 0% 50%;
+  }
+  100% {
+    transform: translateX(60%);
+    background-position: 100% 50%;
+  }
+}
