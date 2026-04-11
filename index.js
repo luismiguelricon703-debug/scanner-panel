@@ -1376,21 +1376,25 @@ app.post("/admin/actualizar-scan", adminOnly, (req, res) => {
 // HACER OWNER
 // ======================
 app.get("/hacer-owner", (req, res) => {
-  const email = "rinconpinol@gmail.com";
+  // Verificar si está logueado
+  if (!req.session.userId) {
+    return res.send("❌ No estás logueado. Inicia sesión primero.");
+  }
 
+  // Convertir al usuario actual en owner
   db.run(
-    `UPDATE users SET role = 'owner' WHERE email = ?`,
-    [email],
+    `UPDATE users SET role = 'owner' WHERE id = ?`,
+    [req.session.userId],
     function (err) {
       if (err) {
-        return res.send("Error poniendo owner: " + err.message);
+        return res.send("❌ Error poniendo owner: " + err.message);
       }
 
       if (this.changes === 0) {
-        return res.send("No se encontró ese usuario");
+        return res.send("❌ No se encontró el usuario");
       }
 
-      res.send("Usuario cambiado a owner correctamente");
+      res.send("✅ Ahora eres OWNER 😈");
     }
   );
 });
