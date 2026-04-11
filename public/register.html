@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="center-wrap">
+    <div class="pro-card small-card">
+      <div class="hero-badge">Crear cuenta</div>
+      <h1>Registro</h1>
+      <p class="muted">Acceso privado para clientes de la plataforma.</p>
+
+      <form method="POST" action="/register">
+        <input type="email" name="email" placeholder="Correo" required>
+        <br><br>
+        <input type="password" name="password" placeholder="Contraseña" required>
+        <br><br>
+        <button class="btn" type="submit">Registrarse</button>
+      </form>
+
+      <div class="actions">
+        <a class="btn btn-secondary" href="/login">Ir al login</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
