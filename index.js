@@ -191,23 +191,23 @@ function renderPage(title, content) {
 // RUTAS HTML EN RAIZ
 // ======================
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "login.html"));
+  res.sendFile(path.join(__dirname, "public", "login.html"));
 });
 
 app.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "login.html"));
+  res.sendFile(path.join(__dirname, "public", "login.html"));
 });
 
 app.get("/register", (req, res) => {
-  res.sendFile(path.join(__dirname, "register.html"));
+  res.sendFile(path.join(__dirname, "public", "register.html"));
 });
 
 app.get("/dashboard-page", (req, res) => {
-  res.sendFile(path.join(__dirname, "dashboard.html"));
+  res.sendFile(path.join(__dirname, "public", "dashboard.html"));
 });
 
 app.get("/admin-page", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin.html"));
+  res.sendFile(path.join(__dirname, "public", "admin.html"));
 });
 
 // ======================
