@@ -862,9 +862,10 @@ app.get("/start/:code", (req, res) => {
             `
             <div class="center-wrap">
               <div class="pro-card small-card">
+                <div class="hero-badge">Escaneo externo</div>
                 <h1>PIN no encontrado</h1>
-                <p class="muted">El código ingresado no existe.</p>
-                <div class="actions">
+                <p class="muted">El código ingresado no existe o ya no está disponible.</p>
+                <div class="actions center-actions">
                   <a class="btn" href="/">Volver</a>
                 </div>
               </div>
@@ -874,33 +875,47 @@ app.get("/start/:code", (req, res) => {
         );
       }
 
+      let titulo = "Iniciar verificación";
+      let subtitulo = "Descarga el scanner, ejecútalo y presiona Start.";
+      let badge = `<span class="status-pill status-pending">Pendiente</span>`;
       let botonHtml = `
         <form method="POST" action="/start-scan/${scan.code}">
-          <button class="btn" type="submit">START SCAN</button>
+          <button class="btn start-btn" type="submit">START SCAN</button>
         </form>
       `;
-
-      let mensajeEstado = "Descargar, ejecutar y presionar Start";
       let progresoHtml = "";
+      let logsHtml = `
+        <div class="scan-logs">
+          <div class="log-line neutral">[INFO] Código listo para iniciar.</div>
+          <div class="log-line neutral">[INFO] Esperando acción del usuario.</div>
+        </div>
+      `;
       let scriptExtra = "";
 
       if (scan.estado === "en_proceso") {
+        titulo = "Análisis en ejecución";
+        subtitulo = "No cierres esta ventana mientras el sistema completa el proceso.";
+        badge = `<span class="status-pill status-processing">En proceso</span>`;
         botonHtml = `<button class="btn btn-secondary" disabled>SCAN EN PROCESO</button>`;
-        mensajeEstado = "El proceso ya fue iniciado";
 
         progresoHtml = `
-          <div class="progress-box">
-            <div class="progress-label">Estado del proceso</div>
-            <div class="progress-bar">
-              <div class="progress-fill progress-animate"></div>
+          <div class="scan-progress-card">
+            <div class="progress-header">
+              <span>Progreso del análisis</span>
+              <span id="progress-percent">65%</span>
             </div>
-            <div class="progress-text" id="progressText">Escaneando sistema...</div>
+            <div class="progress-bar-pro">
+              <div class="progress-fill-pro progress-animate-pro"></div>
+            </div>
+            <div class="progress-message" id="progressText">Escaneando sistema...</div>
+          </div>
+        `;
 
-            <div class="log-box" id="logBox">
-              <div class="log-line">[OK] Inicializando entorno...</div>
-              <div class="log-line">[OK] Verificando archivos temporales...</div>
-              <div class="log-line">[OK] Analizando procesos activos...</div>
-            </div>
+        logsHtml = `
+          <div class="scan-logs" id="logBox">
+            <div class="log-line success">[OK] Inicializando entorno...</div>
+            <div class="log-line success">[OK] Verificando archivos temporales...</div>
+            <div class="log-line success">[OK] Analizando procesos activos...</div>
           </div>
         `;
 
@@ -914,12 +929,17 @@ app.get("/start/:code", (req, res) => {
               "Procesando información..."
             ];
 
+            const porcentajes = ["65%", "71%", "78%", "84%", "91%"];
             let i = 0;
+
             const text = document.getElementById("progressText");
-            if (text) {
+            const percent = document.getElementById("progress-percent");
+
+            if (text && percent) {
               setInterval(() => {
                 i = (i + 1) % mensajes.length;
                 text.textContent = mensajes[i];
+                percent.textContent = porcentajes[i];
               }, 1800);
             }
 
@@ -937,7 +957,7 @@ app.get("/start/:code", (req, res) => {
               setInterval(() => {
                 if (logIndex < logs.length) {
                   const div = document.createElement("div");
-                  div.className = "log-line";
+                  div.className = "log-line success";
                   div.textContent = logs[logIndex];
                   logBox.appendChild(div);
                   logIndex++;
@@ -953,37 +973,69 @@ app.get("/start/:code", (req, res) => {
       }
 
       if (scan.estado === "revision") {
+        titulo = "Proceso completado";
+        subtitulo = "El análisis terminó y ahora está esperando validación del staff.";
+        badge = `<span class="status-pill status-review">En revisión</span>`;
         botonHtml = `<button class="btn btn-secondary" disabled>EN REVISIÓN</button>`;
-        mensajeEstado = "El scan terminó y ahora está en revisión del staff";
 
         progresoHtml = `
-          <div class="progress-box">
-            <div class="progress-label">Estado del proceso</div>
-            <div class="progress-bar">
-              <div class="progress-fill progress-review"></div>
+          <div class="scan-progress-card">
+            <div class="progress-header">
+              <span>Estado del análisis</span>
+              <span>100%</span>
             </div>
-            <div class="progress-text">Proceso completado. Esperando revisión del equipo.</div>
+            <div class="progress-bar-pro">
+              <div class="progress-fill-pro progress-review-pro"></div>
+            </div>
+            <div class="progress-message">Proceso completado. Esperando validación del equipo.</div>
+          </div>
+        `;
 
-            <div class="log-box">
-              <div class="log-line">[OK] Proceso finalizado</div>
-              <div class="log-line">[OK] Datos enviados a revisión</div>
-              <div class="log-line">[OK] Esperando validación del staff...</div>
-            </div>
+        logsHtml = `
+          <div class="scan-logs">
+            <div class="log-line success">[OK] Proceso finalizado</div>
+            <div class="log-line success">[OK] Datos enviados a revisión</div>
+            <div class="log-line warning">[WAIT] Esperando validación del staff...</div>
           </div>
         `;
       }
 
       if (scan.estado === "completado") {
+        titulo = "Verificación finalizada";
+        subtitulo = "El proceso fue completado correctamente.";
+        badge = `<span class="status-pill status-complete">Finalizado</span>`;
         botonHtml = `<button class="btn btn-secondary" disabled>SCAN FINALIZADO</button>`;
-        mensajeEstado = "El proceso ya terminó";
+
+        progressoHtml = `
+          <div class="scan-progress-card">
+            <div class="progress-header">
+              <span>Estado del análisis</span>
+              <span>100%</span>
+            </div>
+            <div class="progress-bar-pro">
+              <div class="progress-fill-pro progress-complete-pro"></div>
+            </div>
+            <div class="progress-message">Proceso finalizado correctamente.</div>
+          </div>
+        `;
 
         progresoHtml = `
-          <div class="progress-box">
-            <div class="progress-label">Estado del proceso</div>
-            <div class="progress-bar">
-              <div class="progress-fill progress-complete"></div>
+          <div class="scan-progress-card">
+            <div class="progress-header">
+              <span>Estado del análisis</span>
+              <span>100%</span>
             </div>
-            <div class="progress-text">Proceso finalizado correctamente</div>
+            <div class="progress-bar-pro">
+              <div class="progress-fill-pro progress-complete-pro"></div>
+            </div>
+            <div class="progress-message">Proceso finalizado correctamente.</div>
+          </div>
+        `;
+
+        logsHtml = `
+          <div class="scan-logs">
+            <div class="log-line success">[OK] Verificación completada</div>
+            <div class="log-line success">[OK] Resultado enviado al panel privado</div>
           </div>
         `;
       }
@@ -993,35 +1045,48 @@ app.get("/start/:code", (req, res) => {
           "Start Scan",
           `
           <div class="center-wrap">
-            <div class="pro-card scan-process-card">
+            <div class="pro-card scan-process-card external-scan-card">
               <div class="hero-badge">Escaneo externo</div>
-              <h1>Iniciar proceso</h1>
+
+              <div class="external-header">
+                <div>
+                  <h1>${titulo}</h1>
+                  <p class="muted">${subtitulo}</p>
+                </div>
+                <div class="external-status">
+                  ${badge}
+                </div>
+              </div>
 
               <div class="pin-box">${scan.code}</div>
 
-              <div class="process-grid">
-                <div class="process-item">
-                  <span class="label">Estado actual</span>
-                  <span class="badge ${estadoClass(scan.estado)}">${scan.estado}</span>
+              <div class="scan-info-grid">
+                <div class="scan-info-card">
+                  <span class="label">Código del scan</span>
+                  <span class="value-text">${scan.code}</span>
                 </div>
-
-                <div class="process-item">
-                  <span class="label">Acción</span>
-                  <span class="value-text">${mensajeEstado}</span>
+                <div class="scan-info-card">
+                  <span class="label">Estado actual</span>
+                  <span class="value-text">${scan.estado}</span>
                 </div>
               </div>
 
               ${progresoHtml}
 
-              <div class="instructions-box">
-                <h3>Instrucciones</h3>
+              <div class="instructions-box scan-instructions-pro">
+                <h3>Pasos a seguir</h3>
                 <ol>
-                  <li>Descarga el scanner desde el enlace que te envió la persona responsable.</li>
+                  <li>Descarga el scanner desde el enlace enviado por la persona responsable.</li>
                   <li>Ejecuta el archivo en tu equipo.</li>
-                  <li>Presiona <strong>Start</strong> para comenzar el proceso.</li>
-                  <li>No cierres la ventana hasta completar el análisis.</li>
-                  <li>El resultado será revisado solo por el usuario autorizado y el dueño.</li>
+                  <li>Presiona <strong>START SCAN</strong> para comenzar.</li>
+                  <li>No cierres esta ventana hasta que el proceso termine.</li>
+                  <li>Los resultados serán visibles solo para usuarios autorizados.</li>
                 </ol>
+              </div>
+
+              <div class="logs-wrapper">
+                <div class="logs-title">Registro del proceso</div>
+                ${logsHtml}
               </div>
 
               <div class="actions center-actions">
