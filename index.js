@@ -1385,42 +1385,50 @@ app.get("/api/scan-status/:pin", (req, res) => {
 });
 
 // ======================
-// API: VER REPORTE POR PIN
+// VER REPORTE
 // ======================
-app.get("/api/report/:pin", (req, res) => {
-  const { pin } = req.params;
+app.get("/ver-reporte/:code", auth, (req, res) => {
+  const { code } = req.params;
 
   db.get(
     `SELECT * FROM scan_reports WHERE pin = ? ORDER BY id DESC LIMIT 1`,
-    [pin],
+    [code],
     (err, report) => {
-      if (err) {
-        return res.status(500).json({
-          ok: false,
-          error: "Error consultando reporte",
-        });
+      if (err || !report) {
+        return res.send(`
+          <h1>No hay reporte para este PIN</h1>
+          <a href="/admin">Volver</a>
+        `);
       }
 
-      if (!report) {
-        return res.status(404).json({
-          ok: false,
-          error: "No hay reporte para este PIN",
-        });
-      }
+      const processes = JSON.parse(report.processes || "[]");
+      const programs = JSON.parse(report.installed_programs || "[]");
+      const services = JSON.parse(report.services || "[]");
 
-      return res.json({
-        ok: true,
-        report: {
-          id: report.id,
-          pin: report.pin,
-          pc_name: report.pc_name,
-          windows_version: report.windows_version,
-          processes: JSON.parse(report.processes || "[]"),
-          installed_programs: JSON.parse(report.installed_programs || "[]"),
-          services: JSON.parse(report.services || "[]"),
-          created_at: report.created_at,
-        },
-      });
+      res.send(`
+        <h1>Reporte del Scan ${code}</h1>
+
+        <p><b>PC:</b> ${report.pc_name}</p>
+        <p><b>Windows:</b> ${report.windows_version}</p>
+
+        <h3>Procesos</h3>
+        <ul>
+          ${processes.map(p => `<li>${p}</li>`).join("")}
+        </ul>
+
+        <h3>Programas</h3>
+        <ul>
+          ${programs.map(p => `<li>${p}</li>`).join("")}
+        </ul>
+
+        <h3>Servicios</h3>
+        <ul>
+          ${services.map(s => `<li>${s}</li>`).join("")}
+        </ul>
+
+        <br>
+        <a href="/admin">Volver</a>
+      `);
     }
   );
 });
