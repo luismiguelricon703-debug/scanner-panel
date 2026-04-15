@@ -1500,26 +1500,29 @@ app.get("/admin", adminOnly, (req, res) => {
               <td><span class="badge ${estadoClass(scan.estado)}">${scan.estado}</span></td>
               <td><span class="badge ${badgeClass(scan.resultado)}">${scan.resultado}</span></td>
               <td>${formatFecha(scan.fecha_creacion)}</td>
-              <td>
-                <form method="POST" action="/admin/actualizar-scan" class="admin-scan-form">
-                  <input type="hidden" name="scan_id" value="${scan.id}">
-                  <select name="estado" required>
-                    <option value="pendiente">pendiente</option>
-                    <option value="en_proceso">en_proceso</option>
-                    <option value="revision">revision</option>
-                    <option value="completado">completado</option>
-                  </select>
-                  <select name="resultado" required>
-                    <option value="pendiente">pendiente</option>
-                    <option value="limpio">limpio</option>
-                    <option value="sospechoso">sospechoso</option>
-                    <option value="detectado">detectado</option>
-                  </select>
-                  <input type="text" name="detalle" placeholder="Detalle">
-                  <button class="btn small-btn" type="submit">Guardar</button>
-                </form>
-              </td>
-            </tr>
+            <td>
+  <div style="display:flex; flex-direction:column; gap:10px;">
+    <a class="btn small-btn" href="/admin/report/${scan.code}">Ver reporte</a>
+
+    <form method="POST" action="/admin/actualizar-scan" class="admin-scan-form">
+      <input type="hidden" name="scan_id" value="${scan.id}">
+      <select name="estado" required>
+        <option value="pendiente">pendiente</option>
+        <option value="en_proceso">en_proceso</option>
+        <option value="revision">revision</option>
+        <option value="completado">completado</option>
+      </select>
+      <select name="resultado" required>
+        <option value="pendiente">pendiente</option>
+        <option value="limpio">limpio</option>
+        <option value="sospechoso">sospechoso</option>
+        <option value="detectado">detectado</option>
+      </select>
+      <input type="text" name="detalle" placeholder="Detalle">
+      <button class="btn small-btn" type="submit">Guardar</button>
+    </form>
+  </div>
+</td>
           `
             )
             .join("")
