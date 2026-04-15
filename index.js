@@ -1737,6 +1737,138 @@ app.get("/hacer-owner", (req, res) => {
     }
   );
 });
+// ======================
+// VER REPORTE EN PANEL ADMIN
+// ======================
+app.get("/admin/report/:pin", adminOnly, (req, res) => {
+  const { pin } = req.params;
+
+  db.get(
+    `SELECT * FROM scan_reports WHERE pin = ? ORDER BY id DESC LIMIT 1`,
+    [pin],
+    (err, report) => {
+      if (err) {
+        return res.send(
+          renderPage(
+            "Error",
+            `
+            <div class="center-wrap">
+              <div class="pro-card small-card">
+                <h1>Error cargando reporte</h1>
+                <p class="muted">${err.message}</p>
+                <div class="actions">
+                  <a class="btn" href="/admin">Volver</a>
+                </div>
+              </div>
+            </div>
+            `
+          )
+        );
+      }
+
+      if (!report) {
+        return res.send(
+          renderPage(
+            "Reporte no encontrado",
+            `
+            <div class="center-wrap">
+              <div class="pro-card small-card">
+                <h1>No hay reporte para este PIN</h1>
+                <div class="actions">
+                  <a class="btn" href="/admin">Volver</a>
+                </div>
+              </div>
+            </div>
+            `
+          )
+        );
+      }
+
+      const processes = JSON.parse(report.processes || "[]");
+      const installedPrograms = JSON.parse(report.installed_programs || "[]");
+      const services = JSON.parse(report.services || "[]");
+
+      const procesosHtml = processes.length
+        ? processes.map((p) => `<li>${p}</li>`).join("")
+        : "<li>No hay procesos</li>";
+
+      const programasHtml = installedPrograms.length
+        ? installedPrograms.map((p) => `<li>${p}</li>`).join("")
+        : "<li>No hay programas</li>";
+
+      const serviciosHtml = services.length
+        ? services.map((s) => `<li>${s}</li>`).join("")
+        : "<li>No hay servicios</li>";
+
+      res.send(
+        renderPage(
+          "Reporte del Scan",
+          `
+          <div class="center-wrap">
+            <div class="pro-card" style="max-width: 950px; width: 100%;">
+              <div class="hero-badge">Reporte del scanner</div>
+              <h1>Reporte para ${report.pin}</h1>
+
+              <div class="process-grid" style="margin-top: 20px;">
+                <div class="process-item">
+                  <span class="label">PIN</span>
+                  <span class="value-text">${report.pin}</span>
+                </div>
+
+                <div class="process-item">
+                  <span class="label">Nombre del PC</span>
+                  <span class="value-text">${report.pc_name || "Sin dato"}</span>
+                </div>
+
+                <div class="process-item">
+                  <span class="label">Versión de Windows</span>
+                  <span class="value-text">${report.windows_version || "Sin dato"}</span>
+                </div>
+
+                <div class="process-item">
+                  <span class="label">Fecha</span>
+                  <span class="value-text">${formatFecha(report.created_at)}</span>
+                </div>
+              </div>
+
+              <div class="panel-card" style="margin-top:20px;">
+                <div class="panel-header">
+                  <h2>Procesos activos</h2>
+                </div>
+                <ul>
+                  ${procesosHtml}
+                </ul>
+              </div>
+
+              <div class="panel-card" style="margin-top:20px;">
+                <div class="panel-header">
+                  <h2>Programas instalados</h2>
+                </div>
+                <ul>
+                  ${programasHtml}
+                </ul>
+              </div>
+
+              <div class="panel-card" style="margin-top:20px;">
+                <div class="panel-header">
+                  <h2>Servicios</h2>
+                </div>
+                <ul>
+                  ${serviciosHtml}
+                </ul>
+              </div>
+
+              <div class="actions center-actions" style="margin-top:20px;">
+                <a class="btn" href="/admin">Volver al Admin</a>
+              </div>
+            </div>
+          </div>
+          `
+        )
+      );
+    }
+  );
+});
 
 // ======================
 // SERVER
