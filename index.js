@@ -1250,6 +1250,8 @@ app.post("/api/start-scan", (req, res) => {
 // API: SUBIR REPORTE
 // ======================
 app.post("/api/upload-report", (req, res) => {
+  console.log("📥 RECIBIENDO REPORTE:", req.body);
+
   const {
     pin,
     pc_name,
@@ -1309,6 +1311,7 @@ app.post("/api/upload-report", (req, res) => {
         ],
         function (insertErr) {
           if (insertErr) {
+            console.log("❌ ERROR GUARDANDO REPORTE:", insertErr.message);
             return res.status(500).json({
               ok: false,
               error: "Error guardando reporte",
@@ -1320,11 +1323,14 @@ app.post("/api/upload-report", (req, res) => {
             ["revision", fecha, pin],
             (updateErr) => {
               if (updateErr) {
+                console.log("❌ ERROR ACTUALIZANDO SCAN:", updateErr.message);
                 return res.status(500).json({
                   ok: false,
                   error: "Reporte guardado pero no se pudo actualizar el estado",
                 });
               }
+
+              console.log("✅ REPORTE GUARDADO PARA:", pin);
 
               return res.json({
                 ok: true,
