@@ -61,6 +61,20 @@ db.serialize(() => {
     )
   `);
 
+  db.run(`
+    CREATE TABLE IF NOT EXISTS scan_reports (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      scan_id INTEGER,
+      pin TEXT,
+      pc_name TEXT,
+      windows_version TEXT,
+      processes TEXT,
+      installed_programs TEXT,
+      services TEXT,
+      created_at TEXT
+    )
+  `);
+
   console.log("Tablas listas");
 });
 
@@ -188,7 +202,7 @@ function renderPage(title, content) {
 }
 
 // ======================
-// RUTAS HTML EN RAIZ
+// RUTAS HTML EN PUBLIC
 // ======================
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "login.html"));
@@ -1006,19 +1020,6 @@ app.get("/start/:code", (req, res) => {
         badge = `<span class="status-pill status-complete">Finalizado</span>`;
         botonHtml = `<button class="btn btn-secondary" disabled>SCAN FINALIZADO</button>`;
 
-        progressoHtml = `
-          <div class="scan-progress-card">
-            <div class="progress-header">
-              <span>Estado del análisis</span>
-              <span>100%</span>
-            </div>
-            <div class="progress-bar-pro">
-              <div class="progress-fill-pro progress-complete-pro"></div>
-            </div>
-            <div class="progress-message">Proceso finalizado correctamente.</div>
-          </div>
-        `;
-
         progresoHtml = `
           <div class="scan-progress-card">
             <div class="progress-header">
@@ -1157,6 +1158,263 @@ app.post("/start-scan/:code", (req, res) => {
       }, 8000);
 
       res.redirect(`/start/${code}`);
+    }
+  );
+});
+
+// ======================
+// API: VALIDAR PIN
+// ======================
+app.post("/api/validate-pin", (req, res) => {
+  const { pin } = req.body;
+
+  if (!pin) {
+    return res.status(400).json({
+      ok: false,
+      error: "Falta el PIN",
+    });
+  }
+
+  db.get(
+    `SELECT * FROM scans WHERE code = ?`,
+    [pin],
+    (err, scan) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          error: "Error consultando la base de datos",
+        });
+      }
+
+      if (!scan) {
+        return res.status(404).json({
+          ok: false,
+          error: "PIN no válido",
+        });
+      }
+
+      return res.json({
+        ok: true,
+        message: "PIN válido",
+        scan: {
+          id: scan.id,
+          code: scan.code,
+          estado: scan.estado,
+          resultado: scan.resultado,
+        },
+      });
+    }
+  );
+});
+
+// ======================
+// API: INICIAR SCAN
+// ======================
+app.post("/api/start-scan", (req, res) => {
+  const { pin } = req.body;
+
+  if (!pin) {
+    return res.status(400).json({
+      ok: false,
+      error: "Falta el PIN",
+    });
+  }
+
+  db.run(
+    `UPDATE scans SET estado = ? WHERE code = ?`,
+    ["en_proceso", pin],
+    function (err) {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          error: "Error iniciando scan",
+        });
+      }
+
+      if (this.changes === 0) {
+        return res.status(404).json({
+          ok: false,
+          error: "PIN no encontrado",
+        });
+      }
+
+      return res.json({
+        ok: true,
+        message: "Scan iniciado correctamente",
+      });
+    }
+  );
+});
+
+// ======================
+// API: SUBIR REPORTE
+// ======================
+app.post("/api/upload-report", (req, res) => {
+  const {
+    pin,
+    pc_name,
+    windows_version,
+    processes,
+    installed_programs,
+    services,
+  } = req.body;
+
+  if (!pin) {
+    return res.status(400).json({
+      ok: false,
+      error: "Falta el PIN",
+    });
+  }
+
+  db.get(
+    `SELECT * FROM scans WHERE code = ?`,
+    [pin],
+    (err, scan) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          error: "Error buscando scan",
+        });
+      }
+
+      if (!scan) {
+        return res.status(404).json({
+          ok: false,
+          error: "PIN no encontrado",
+        });
+      }
+
+      const fecha = new Date().toISOString();
+
+      db.run(
+        `INSERT INTO scan_reports (
+          scan_id,
+          pin,
+          pc_name,
+          windows_version,
+          processes,
+          installed_programs,
+          services,
+          created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          scan.id,
+          pin,
+          pc_name || "",
+          windows_version || "",
+          JSON.stringify(processes || []),
+          JSON.stringify(installed_programs || []),
+          JSON.stringify(services || []),
+          fecha,
+        ],
+        function (insertErr) {
+          if (insertErr) {
+            return res.status(500).json({
+              ok: false,
+              error: "Error guardando reporte",
+            });
+          }
+
+          db.run(
+            `UPDATE scans SET estado = ?, fecha_resultado = ? WHERE code = ?`,
+            ["revision", fecha, pin],
+            (updateErr) => {
+              if (updateErr) {
+                return res.status(500).json({
+                  ok: false,
+                  error: "Reporte guardado pero no se pudo actualizar el estado",
+                });
+              }
+
+              return res.json({
+                ok: true,
+                message: "Reporte recibido correctamente",
+              });
+            }
+          );
+        }
+      );
+    }
+  );
+});
+
+// ======================
+// API: ESTADO DEL SCAN
+// ======================
+app.get("/api/scan-status/:pin", (req, res) => {
+  const { pin } = req.params;
+
+  db.get(
+    `SELECT * FROM scans WHERE code = ?`,
+    [pin],
+    (err, scan) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          error: "Error consultando estado",
+        });
+      }
+
+      if (!scan) {
+        return res.status(404).json({
+          ok: false,
+          error: "PIN no encontrado",
+        });
+      }
+
+      return res.json({
+        ok: true,
+        scan: {
+          id: scan.id,
+          code: scan.code,
+          estado: scan.estado,
+          resultado: scan.resultado,
+          detalle: scan.detalle,
+          fecha_creacion: scan.fecha_creacion,
+          fecha_resultado: scan.fecha_resultado,
+        },
+      });
+    }
+  );
+});
+
+// ======================
+// API: VER REPORTE POR PIN
+// ======================
+app.get("/api/report/:pin", (req, res) => {
+  const { pin } = req.params;
+
+  db.get(
+    `SELECT * FROM scan_reports WHERE pin = ? ORDER BY id DESC LIMIT 1`,
+    [pin],
+    (err, report) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          error: "Error consultando reporte",
+        });
+      }
+
+      if (!report) {
+        return res.status(404).json({
+          ok: false,
+          error: "No hay reporte para este PIN",
+        });
+      }
+
+      return res.json({
+        ok: true,
+        report: {
+          id: report.id,
+          pin: report.pin,
+          pc_name: report.pc_name,
+          windows_version: report.windows_version,
+          processes: JSON.parse(report.processes || "[]"),
+          installed_programs: JSON.parse(report.installed_programs || "[]"),
+          services: JSON.parse(report.services || "[]"),
+          created_at: report.created_at,
+        },
+      });
     }
   );
 });
