@@ -1385,50 +1385,141 @@ app.get("/api/scan-status/:pin", (req, res) => {
 });
 
 // ======================
-// VER REPORTE
+// VER REPORTE EN PANEL ADMIN
 // ======================
-app.get("/ver-reporte/:code", auth, (req, res) => {
-  const { code } = req.params;
+app.get("/admin/report/:pin", adminOnly, (req, res) => {
+  const { pin } = req.params;
+
+  console.log("🔎 BUSCANDO REPORTE PARA:", pin);
 
   db.get(
     `SELECT * FROM scan_reports WHERE pin = ? ORDER BY id DESC LIMIT 1`,
-    [code],
+    [pin],
     (err, report) => {
-      if (err || !report) {
-        return res.send(`
-          <h1>No hay reporte para este PIN</h1>
-          <a href="/admin">Volver</a>
-        `);
+      if (err) {
+        console.log("❌ ERROR CARGANDO REPORTE:", err.message);
+        return res.send(
+          renderPage(
+            "Error",
+            `
+            <div class="center-wrap">
+              <div class="pro-card small-card">
+                <h1>Error cargando reporte</h1>
+                <p class="muted">${err.message}</p>
+                <div class="actions">
+                  <a class="btn" href="/admin">Volver</a>
+                </div>
+              </div>
+            </div>
+            `
+          )
+        );
       }
 
+      if (!report) {
+        console.log("⚠️ NO HAY REPORTE PARA:", pin);
+        return res.send(
+          renderPage(
+            "Reporte no encontrado",
+            `
+            <div class="center-wrap">
+              <div class="pro-card small-card">
+                <h1>No hay reporte para este PIN</h1>
+                <p class="muted">PIN consultado: ${pin}</p>
+                <div class="actions">
+                  <a class="btn" href="/admin">Volver</a>
+                </div>
+              </div>
+            </div>
+            `
+          )
+        );
+      }
+
+      console.log("✅ REPORTE ENCONTRADO PARA:", pin);
+
       const processes = JSON.parse(report.processes || "[]");
-      const programs = JSON.parse(report.installed_programs || "[]");
+      const installedPrograms = JSON.parse(report.installed_programs || "[]");
       const services = JSON.parse(report.services || "[]");
 
-      res.send(`
-        <h1>Reporte del Scan ${code}</h1>
+      const procesosHtml = processes.length
+        ? processes.map((p) => `<li>${p}</li>`).join("")
+        : "<li>No hay procesos</li>";
 
-        <p><b>PC:</b> ${report.pc_name}</p>
-        <p><b>Windows:</b> ${report.windows_version}</p>
+      const programasHtml = installedPrograms.length
+        ? installedPrograms.map((p) => `<li>${p}</li>`).join("")
+        : "<li>No hay programas</li>";
 
-        <h3>Procesos</h3>
-        <ul>
-          ${processes.map(p => `<li>${p}</li>`).join("")}
-        </ul>
+      const serviciosHtml = services.length
+        ? services.map((s) => `<li>${s}</li>`).join("")
+        : "<li>No hay servicios</li>";
 
-        <h3>Programas</h3>
-        <ul>
-          ${programs.map(p => `<li>${p}</li>`).join("")}
-        </ul>
+      res.send(
+        renderPage(
+          "Reporte del Scan",
+          `
+          <div class="center-wrap">
+            <div class="pro-card" style="max-width: 950px; width: 100%;">
+              <div class="hero-badge">Reporte del scanner</div>
+              <h1>Reporte para ${report.pin}</h1>
 
-        <h3>Servicios</h3>
-        <ul>
-          ${services.map(s => `<li>${s}</li>`).join("")}
-        </ul>
+              <div class="process-grid" style="margin-top: 20px;">
+                <div class="process-item">
+                  <span class="label">PIN</span>
+                  <span class="value-text">${report.pin}</span>
+                </div>
 
-        <br>
-        <a href="/admin">Volver</a>
-      `);
+                <div class="process-item">
+                  <span class="label">Nombre del PC</span>
+                  <span class="value-text">${report.pc_name || "Sin dato"}</span>
+                </div>
+
+                <div class="process-item">
+                  <span class="label">Versión de Windows</span>
+                  <span class="value-text">${report.windows_version || "Sin dato"}</span>
+                </div>
+
+                <div class="process-item">
+                  <span class="label">Fecha</span>
+                  <span class="value-text">${formatFecha(report.created_at)}</span>
+                </div>
+              </div>
+
+              <div class="panel-card" style="margin-top:20px;">
+                <div class="panel-header">
+                  <h2>Procesos activos</h2>
+                </div>
+                <ul>
+                  ${procesosHtml}
+                </ul>
+              </div>
+
+              <div class="panel-card" style="margin-top:20px;">
+                <div class="panel-header">
+                  <h2>Programas instalados</h2>
+                </div>
+                <ul>
+                  ${programasHtml}
+                </ul>
+              </div>
+
+              <div class="panel-card" style="margin-top:20px;">
+                <div class="panel-header">
+                  <h2>Servicios</h2>
+                </div>
+                <ul>
+                  ${serviciosHtml}
+                </ul>
+              </div>
+
+              <div class="actions center-actions" style="margin-top:20px;">
+                <a class="btn" href="/admin">Volver al Admin</a>
+              </div>
+            </div>
+          </div>
+          `
+        )
+      );
     }
   );
 });
