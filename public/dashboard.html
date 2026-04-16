@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="center-wrap">
+    <div class="pro-card">
+      <div class="hero-badge">Panel privado</div>
+      <h1>Panel del Usuario</h1>
+      <p class="muted">Bienvenido a tu panel.</p>
+
+      <div class="actions" style="margin-top:20px;">
+        <form method="POST" action="/create-scan">
+          <button class="btn" type="submit">Crear Scan</button>
+        </form>
+      </div>
+
+      <div class="actions" style="margin-top:15px;">
+        <a class="btn btn-secondary" href="/dashboard">Ir al dashboard real</a>
+        <a class="btn btn-secondary" href="/logout">Cerrar sesión</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

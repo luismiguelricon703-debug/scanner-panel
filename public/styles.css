@@ -1,0 +1,163 @@
+/* =========================
+   FONDO ANIMADO 🇻🇪
+========================= */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(270deg, #000000, #0a0f2c, #000000);
+  background-size: 600% 600%;
+  animation: fondoAnimado 12s ease infinite;
+  color: #fff;
+}
+
+@keyframes fondoAnimado {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+.sidebar {
+  background: rgba(10,10,20,0.9);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid #222;
+}
+
+/* =========================
+   BOTONES
+========================= */
+.btn {
+  background: linear-gradient(90deg, #FFD700, #0d6efd, #ff3b3b);
+  border: none;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #FFD700;
+}
+
+/* =========================
+   CARDS (ESTILO NAPSE)
+========================= */
+.stat-card {
+  background: rgba(20,20,40,0.6);
+  border-radius: 15px;
+  padding: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(8px);
+  transition: 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px rgba(255,255,255,0.1);
+}
+
+/* =========================
+   COLORES 🇻🇪
+========================= */
+.badge-limpio {
+  background: #0d6efd;
+}
+
+.badge-sospechoso {
+  background: #FFD700;
+  color: #000;
+}
+
+.badge-detectado {
+  background: #ff3b3b;
+}
+
+.badge-pendiente {
+  background: #666;
+}
+
+/* =========================
+   TABLA PRO
+========================= */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table tr {
+  transition: 0.3s;
+}
+
+table tr:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+table td, table th {
+  padding: 12px;
+  border-bottom: 1px solid #222;
+}
+
+/* =========================
+   EFECTO NEON TITULOS
+========================= */
+.page-title {
+  color: #FFD700;
+  text-shadow: 0 0 10px #FFD700;
+}
+
+/* =========================
+   PIN BOX
+========================= */
+.pin-box {
+  font-size: 26px;
+  padding: 15px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.7);
+  text-align: center;
+  border: 1px solid #FFD700;
+  box-shadow: 0 0 15px #FFD700;
+}
+
+/* =========================
+   LOGS (TERMINAL PRO)
+========================= */
+.scan-logs {
+  background: #000;
+  padding: 10px;
+  border-radius: 10px;
+  font-family: monospace;
+}
+
+.log-line {
+  margin: 5px 0;
+}
+
+.success { color: #00ff88; }
+.warning { color: #FFD700; }
+.error { color: #ff3b3b; }
+
+/* =========================
+   EFECTO BANDERA 🇻🇪
+========================= */
+.dashboard-shell::after {
+  content: "";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(
+    to bottom,
+    #FFD700 0%,
+    #FFD700 33%,
+    #0d6efd 33%,
+    #0d6efd 66%,
+    #ff3b3b 66%
+  );
+  opacity: 0.08;
+}
