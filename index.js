@@ -475,7 +475,9 @@ app.get("/dashboard", auth, (req, res) => {
                 `
                 <div class="dashboard-shell">
                   <aside class="sidebar">
-                    <div class="sidebar-logo">SCANNER</div>
+                    <div class="sidebar-logo">
+                      <img src="/logo.png" alt="VNZ.ac" class="logo-img">
+                    </div>
 
                     <div class="sidebar-user">
                       <div class="sidebar-label">Cuenta</div>
@@ -490,6 +492,17 @@ app.get("/dashboard", auth, (req, res) => {
                   </aside>
 
                   <main class="main-content">
+                  <!-- HERO BANNER -->
+<div class="hero-banner">
+  <img src="/banner1.png" alt="banner principal">
+</div>
+
+<!-- GRID DE BANNERS -->
+<div class="banners-grid">
+  <img src="/banner2.png" alt="scan">
+  <img src="/banner3.png" alt="security">
+  <img src="/banner4.png" alt="global">
+</div>
                     <div class="topbar">
                       <div class="topbar-left">
                         <div class="scanner-radar">
@@ -510,6 +523,27 @@ app.get("/dashboard", auth, (req, res) => {
                         ${botonAdmin}
                       </div>
                     </div>
+
+                    <section class="hero-banner">
+                      <div class="hero-left">
+                        <div class="hero-badge-box">VNZ.AC</div>
+                        <h2 class="hero-title">Panel de control inteligente</h2>
+                        <p class="hero-text">
+                          Todos los sistemas operativos • Bienvenido de nuevo.
+                          Genera un PIN de escaneo, compártelo y revisa el resultado desde tu panel.
+                        </p>
+                      </div>
+
+                      <div class="hero-right">
+                        <img src="/banner1.png" alt="banner principal" class="hero-image-main">
+                      </div>
+                    </section>
+
+                    <section class="hero-gallery">
+                      <img src="/banner2.png" alt="imagen 1" class="hero-thumb">
+                      <img src="/banner3.png" alt="imagen 2" class="hero-thumb">
+                      <img src="/banner4.png" alt="imagen 3" class="hero-thumb">
+                    </section>
 
                     <section class="stats-grid">
                       <div class="stat-card">
