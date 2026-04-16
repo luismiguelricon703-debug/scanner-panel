@@ -469,13 +469,14 @@ app.get("/dashboard", auth, (req, res) => {
                 ? `<a class="btn btn-secondary" href="/admin">Panel admin</a>`
                 : "";
 
-            res.send(
+            return res.send(
               renderPage(
                 "Dashboard",
                 `
                 <div class="dashboard-shell">
                   <aside class="sidebar">
                     <div class="sidebar-logo">SCANNER</div>
+
                     <div class="sidebar-user">
                       <div class="sidebar-label">Cuenta</div>
                       <div class="sidebar-email">${user.email}</div>
@@ -483,7 +484,7 @@ app.get("/dashboard", auth, (req, res) => {
 
                     <nav class="sidebar-nav">
                       <a class="nav-item active" href="/dashboard">Dashboard</a>
-                      ${user.role === "owner" ? `<a class="nav-item" href="/admin">Admin</a>` : ""}
+                      ${user.role === "owner" ? `<a class="nav-item" href="/admin">Panel Admin</a>` : ""}
                       <a class="nav-item danger" href="/logout">Cerrar sesión</a>
                     </nav>
                   </aside>
@@ -494,6 +495,7 @@ app.get("/dashboard", auth, (req, res) => {
                         <h1 class="page-title">Dashboard</h1>
                         <p class="page-subtitle">Panel privado de gestión de escaneos</p>
                       </div>
+
                       <div class="actions">
                         <form method="POST" action="/create-scan">
                           <button class="btn" type="submit">Crear Scan</button>
@@ -505,7 +507,7 @@ app.get("/dashboard", auth, (req, res) => {
                     <section class="stats-grid">
                       <div class="stat-card">
                         <div class="stat-label">Plan</div>
-                        <div class="stat-value">${userActualizado.plan}</div>
+                        <div class="stat-value small-text">${userActualizado.plan}</div>
                       </div>
 
                       <div class="stat-card">
@@ -538,8 +540,10 @@ app.get("/dashboard", auth, (req, res) => {
 
                     <section class="panel-card">
                       <div class="panel-header">
-                        <h2>Mis scans</h2>
-                        <p class="muted">Solo los usuarios con acceso pueden generar PIN.</p>
+                        <div>
+                          <h2>Mis scans</h2>
+                          <p class="muted">Solo los usuarios con acceso pueden generar PIN.</p>
+                        </div>
                       </div>
 
                       <div class="table-wrap">
@@ -1343,6 +1347,7 @@ app.post("/api/upload-report", (req, res) => {
     }
   );
 });
+
 // ======================
 // API: ESTADO DEL SCAN
 // ======================
@@ -1389,14 +1394,11 @@ app.get("/api/scan-status/:pin", (req, res) => {
 app.get("/admin/report/:pin", adminOnly, (req, res) => {
   const { pin } = req.params;
 
-  console.log("🔎 BUSCANDO REPORTE PARA:", pin);
-
   db.get(
     `SELECT * FROM scan_reports WHERE pin = ? ORDER BY id DESC LIMIT 1`,
     [pin],
     (err, report) => {
       if (err) {
-        console.log("❌ ERROR CARGANDO REPORTE:", err.message);
         return res.send(
           renderPage(
             "Error",
@@ -1416,7 +1418,6 @@ app.get("/admin/report/:pin", adminOnly, (req, res) => {
       }
 
       if (!report) {
-        console.log("⚠️ NO HAY REPORTE PARA:", pin);
         return res.send(
           renderPage(
             "Reporte no encontrado",
@@ -1424,7 +1425,6 @@ app.get("/admin/report/:pin", adminOnly, (req, res) => {
             <div class="center-wrap">
               <div class="pro-card small-card">
                 <h1>No hay reporte para este PIN</h1>
-                <p class="muted">PIN consultado: ${pin}</p>
                 <div class="actions">
                   <a class="btn" href="/admin">Volver</a>
                 </div>
@@ -1434,8 +1434,6 @@ app.get("/admin/report/:pin", adminOnly, (req, res) => {
           )
         );
       }
-
-      console.log("✅ REPORTE ENCONTRADO PARA:", pin);
 
       const processes = JSON.parse(report.processes || "[]");
       const installedPrograms = JSON.parse(report.installed_programs || "[]");
@@ -1604,29 +1602,30 @@ app.get("/admin", adminOnly, (req, res) => {
               <td><span class="badge ${estadoClass(scan.estado)}">${scan.estado}</span></td>
               <td><span class="badge ${badgeClass(scan.resultado)}">${scan.resultado}</span></td>
               <td>${formatFecha(scan.fecha_creacion)}</td>
-<td>
-  <div style="display:flex; flex-direction:column; gap:10px;">
-    <a class="btn small-btn" href="/admin/report/${scan.code}">Ver reporte</a>
+              <td>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                  <a class="btn small-btn" href="/admin/report/${scan.code}">Ver reporte</a>
 
-    <form method="POST" action="/admin/actualizar-scan" class="admin-scan-form">
-      <input type="hidden" name="scan_id" value="${scan.id}">
-      <select name="estado" required>
-        <option value="pendiente">pendiente</option>
-        <option value="en_proceso">en_proceso</option>
-        <option value="revision">revision</option>
-        <option value="completado">completado</option>
-      </select>
-      <select name="resultado" required>
-        <option value="pendiente">pendiente</option>
-        <option value="limpio">limpio</option>
-        <option value="sospechoso">sospechoso</option>
-        <option value="detectado">detectado</option>
-      </select>
-      <input type="text" name="detalle" placeholder="Detalle">
-      <button class="btn small-btn" type="submit">Guardar</button>
-    </form>
-  </div>
-</td>
+                  <form method="POST" action="/admin/actualizar-scan" class="admin-scan-form">
+                    <input type="hidden" name="scan_id" value="${scan.id}">
+                    <select name="estado" required>
+                      <option value="pendiente">pendiente</option>
+                      <option value="en_proceso">en_proceso</option>
+                      <option value="revision">revision</option>
+                      <option value="completado">completado</option>
+                    </select>
+                    <select name="resultado" required>
+                      <option value="pendiente">pendiente</option>
+                      <option value="limpio">limpio</option>
+                      <option value="sospechoso">sospechoso</option>
+                      <option value="detectado">detectado</option>
+                    </select>
+                    <input type="text" name="detalle" placeholder="Detalle">
+                    <button class="btn small-btn" type="submit">Guardar</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
           `
             )
             .join("")
@@ -1833,7 +1832,7 @@ app.get("/hacer-owner", (req, res) => {
               <p class="muted">Ya puedes entrar al panel admin</p>
 
               <div class="actions" style="margin-top:20px;">
-                <a class="btn" href="/admin-page">Ir al Admin</a>
+                <a class="btn" href="/admin">Ir al Admin</a>
                 <a class="btn btn-secondary" href="/dashboard">Volver</a>
               </div>
             </div>
@@ -1841,138 +1840,6 @@ app.get("/hacer-owner", (req, res) => {
         </body>
         </html>
       `);
-    }
-  );
-});
-// ======================
-// VER REPORTE EN PANEL ADMIN
-// ======================
-app.get("/admin/report/:pin", adminOnly, (req, res) => {
-  const { pin } = req.params;
-
-  db.get(
-    `SELECT * FROM scan_reports WHERE pin = ? ORDER BY id DESC LIMIT 1`,
-    [pin],
-    (err, report) => {
-      if (err) {
-        return res.send(
-          renderPage(
-            "Error",
-            `
-            <div class="center-wrap">
-              <div class="pro-card small-card">
-                <h1>Error cargando reporte</h1>
-                <p class="muted">${err.message}</p>
-                <div class="actions">
-                  <a class="btn" href="/admin">Volver</a>
-                </div>
-              </div>
-            </div>
-            `
-          )
-        );
-      }
-
-      if (!report) {
-        return res.send(
-          renderPage(
-            "Reporte no encontrado",
-            `
-            <div class="center-wrap">
-              <div class="pro-card small-card">
-                <h1>No hay reporte para este PIN</h1>
-                <div class="actions">
-                  <a class="btn" href="/admin">Volver</a>
-                </div>
-              </div>
-            </div>
-            `
-          )
-        );
-      }
-
-      const processes = JSON.parse(report.processes || "[]");
-      const installedPrograms = JSON.parse(report.installed_programs || "[]");
-      const services = JSON.parse(report.services || "[]");
-
-      const procesosHtml = processes.length
-        ? processes.map((p) => `<li>${p}</li>`).join("")
-        : "<li>No hay procesos</li>";
-
-      const programasHtml = installedPrograms.length
-        ? installedPrograms.map((p) => `<li>${p}</li>`).join("")
-        : "<li>No hay programas</li>";
-
-      const serviciosHtml = services.length
-        ? services.map((s) => `<li>${s}</li>`).join("")
-        : "<li>No hay servicios</li>";
-
-      res.send(
-        renderPage(
-          "Reporte del Scan",
-          `
-          <div class="center-wrap">
-            <div class="pro-card" style="max-width: 950px; width: 100%;">
-              <div class="hero-badge">Reporte del scanner</div>
-              <h1>Reporte para ${report.pin}</h1>
-
-              <div class="process-grid" style="margin-top: 20px;">
-                <div class="process-item">
-                  <span class="label">PIN</span>
-                  <span class="value-text">${report.pin}</span>
-                </div>
-
-                <div class="process-item">
-                  <span class="label">Nombre del PC</span>
-                  <span class="value-text">${report.pc_name || "Sin dato"}</span>
-                </div>
-
-                <div class="process-item">
-                  <span class="label">Versión de Windows</span>
-                  <span class="value-text">${report.windows_version || "Sin dato"}</span>
-                </div>
-
-                <div class="process-item">
-                  <span class="label">Fecha</span>
-                  <span class="value-text">${formatFecha(report.created_at)}</span>
-                </div>
-              </div>
-
-              <div class="panel-card" style="margin-top:20px;">
-                <div class="panel-header">
-                  <h2>Procesos activos</h2>
-                </div>
-                <ul>
-                  ${procesosHtml}
-                </ul>
-              </div>
-
-              <div class="panel-card" style="margin-top:20px;">
-                <div class="panel-header">
-                  <h2>Programas instalados</h2>
-                </div>
-                <ul>
-                  ${programasHtml}
-                </ul>
-              </div>
-
-              <div class="panel-card" style="margin-top:20px;">
-                <div class="panel-header">
-                  <h2>Servicios</h2>
-                </div>
-                <ul>
-                  ${serviciosHtml}
-                </ul>
-              </div>
-
-              <div class="actions center-actions" style="margin-top:20px;">
-                <a class="btn" href="/admin">Volver al Admin</a>
-              </div>
-            </div>
-          </div>
-          `
-        )
-      );
     }
   );
 });
