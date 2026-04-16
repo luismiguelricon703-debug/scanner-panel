@@ -493,11 +493,10 @@ app.get("/dashboard", auth, (req, res) => {
 
                   <main class="main-content">
                   <!-- HERO BANNER -->
-<div class="hero-banner">
+<section class="hero-banner">
   <img src="/banner1.png" alt="banner principal">
-</div>
+</section>
 
-<!-- GRID DE BANNERS -->
 <div class="banners-grid">
   <img src="/banner2.png" alt="scan">
   <img src="/banner3.png" alt="security">
