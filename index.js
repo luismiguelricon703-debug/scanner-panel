@@ -491,9 +491,16 @@ app.get("/dashboard", auth, (req, res) => {
 
                   <main class="main-content">
                     <div class="topbar">
-                      <div>
-                        <h1 class="page-title">Dashboard</h1>
-                        <p class="page-subtitle">Panel privado de gestión de escaneos</p>
+                      <div class="topbar-left">
+                        <div class="scanner-radar">
+                          <div class="radar-circle"></div>
+                          <div class="radar-line"></div>
+                        </div>
+
+                        <div class="topbar-text">
+                          <h1 class="page-title">Dashboard</h1>
+                          <p class="page-subtitle">Panel privado de gestión de escaneos</p>
+                        </div>
                       </div>
 
                       <div class="actions">
@@ -1652,9 +1659,16 @@ app.get("/admin", adminOnly, (req, res) => {
 
             <main class="main-content">
               <div class="topbar">
-                <div>
-                  <h1 class="page-title">Panel Admin</h1>
-                  <p class="page-subtitle">Gestión de clientes, planes y resultados</p>
+                <div class="topbar-left">
+                  <div class="scanner-radar">
+                    <div class="radar-circle"></div>
+                    <div class="radar-line"></div>
+                  </div>
+
+                  <div class="topbar-text">
+                    <h1 class="page-title">Panel Admin</h1>
+                    <p class="page-subtitle">Gestión de clientes, planes y resultados</p>
+                  </div>
                 </div>
               </div>
 
