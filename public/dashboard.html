@@ -25,5 +25,22 @@
       </div>
     </div>
   </div>
+
+  const banners = [
+  "/banner1.png",
+  "/banner2.png",
+  "/banner3.png",
+  "/banner4.png"
+];
+
+let index = 0;
+const img = document.getElementById("hero-img");
+
+setInterval(() => {
+  index = (index + 1) % banners.length;
+  img.src = banners[index];
+}, 3000); // cambia cada 3 segundos
+</script>
+
 </body>
 </html>
