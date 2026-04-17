@@ -26,10 +26,16 @@ body {
 }
 
 .sidebar-logo {
-  font-size: 22px;
-  font-weight: bold;
-  color: #ffaa00;
   margin-bottom: 30px;
+  text-align: center;
+}
+
+.logo-img {
+  width: 170px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: 14px;
 }
 
 .sidebar-user {
@@ -47,6 +53,7 @@ body {
 .sidebar-email {
   font-size: 14px;
   margin-top: 5px;
+  word-break: break-word;
 }
 
 .sidebar-nav {
@@ -60,7 +67,7 @@ body {
   border-radius: 8px;
   text-decoration: none;
   color: #ccc;
-  transition: 0.2s;
+  transition: 0.25s ease;
 }
 
 .nav-item:hover {
@@ -71,6 +78,7 @@ body {
 .nav-item.active {
   background: linear-gradient(90deg, #ffaa00, #ff4d4d);
   color: #fff;
+  box-shadow: 0 0 18px rgba(255, 140, 0, 0.2);
 }
 
 .nav-item.danger {
@@ -89,15 +97,29 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
+  gap: 20px;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.topbar-text {
+  display: flex;
+  flex-direction: column;
 }
 
 .page-title {
   font-size: 32px;
   color: #ffaa00;
+  font-weight: 800;
 }
 
 .page-subtitle {
-  color: #888;
+  color: #b7b7b7;
+  font-size: 15px;
 }
 
 /* BUTTONS */
@@ -109,10 +131,125 @@ body {
   color: #fff;
   cursor: pointer;
   text-decoration: none;
+  transition: 0.25s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(255, 120, 0, 0.25);
 }
 
 .btn-secondary {
   background: #222;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* RADAR */
+.scanner-radar {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+}
+
+.radar-circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 255, 150, 0.3);
+  box-shadow: 0 0 15px rgba(0, 255, 150, 0.2);
+  position: absolute;
+}
+
+.radar-line {
+  position: absolute;
+  width: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(0, 255, 150, 1), transparent);
+  top: 50%;
+  left: 50%;
+  transform-origin: left center;
+  animation: radarSpin 2s linear infinite;
+}
+
+.radar-circle::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 255, 150, 0.15), transparent);
+  animation: pulseRadar 2s infinite;
+}
+
+@keyframes radarSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseRadar {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+}
+
+/* HERO PRINCIPAL */
+.hero-banner {
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.hero-banner img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 18px;
+  display: block;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* BANNERS ABAJO */
+.banners-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.banners-grid img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 18px;
+  display: block;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.banners-grid img:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.18);
 }
 
 /* STATS GRID */
@@ -194,6 +331,7 @@ td {
 
 .badge-pendiente {
   background: #444;
+  color: #fff;
 }
 
 .badge-limpio {
@@ -203,14 +341,17 @@ td {
 
 .badge-sospechoso {
   background: orange;
+  color: #000;
 }
 
 .badge-detectado {
   background: red;
+  color: #fff;
 }
 
 .badge-proceso {
   background: #00aaff;
+  color: #fff;
 }
 
 /* CENTER CARDS */
@@ -218,7 +359,7 @@ td {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .pro-card {
@@ -242,335 +383,27 @@ td {
   border-radius: 8px;
   border: 1px solid #333;
 }
-/* =========================
-   RADAR SCANNER PRO
-========================= */
 
-.scanner-radar {
-  position: relative;
-  width: 160px;
-  height: 160px;
-  margin-bottom: 20px;
-}
-
-.radar-circle {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 2px solid rgba(0, 255, 170, 0.2);
-  position: absolute;
-}
-
-.radar-circle::before,
-.radar-circle::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid rgba(0, 255, 170, 0.2);
-  width: 70%;
-  height: 70%;
-  top: 15%;
-  left: 15%;
-}
-
-.radar-circle::after {
-  width: 40%;
-  height: 40%;
-  top: 30%;
-  left: 30%;
-}
-
-.radar-line {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  overflow: hidden;
-}
-
-.radar-line::before {
-  content: "";
-  position: absolute;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(0, 255, 170, 0.5)
-  );
-  transform-origin: right center;
-  animation: radarSpin 2.5s linear infinite;
-}
-
-@keyframes radarSpin {
-  0% {
-    transform: rotate(0deg);
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* efecto glow */
-.scanner-radar {
-  box-shadow: 0 0 20px rgba(0, 255, 170, 0.2);
-}
-/* ======================
-RADAR ANIMATION
-====================== */
-
-.topbar-left {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.topbar-text {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Contenedor radar */
-.scanner-radar {
-  position: relative;
-  width: 60px;
-  height: 60px;
-}
-
-/* Círculo base */
-.radar-circle {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 2px solid rgba(0, 255, 150, 0.3);
-  box-shadow: 0 0 15px rgba(0, 255, 150, 0.2);
-  position: absolute;
-}
-
-/* Línea que gira */
-.radar-line {
-  position: absolute;
-  width: 50%;
-  height: 2px;
-  background: linear-gradient(90deg, rgba(0,255,150,1), transparent);
-  top: 50%;
-  left: 50%;
-  transform-origin: left center;
-  animation: radarSpin 2s linear infinite;
-}
-
-/* Glow animado */
-.radar-circle::after {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0,255,150,0.15), transparent);
-  animation: pulseRadar 2s infinite;
-}
-
-/* Rotación */
-@keyframes radarSpin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Pulso */
-@keyframes pulseRadar {
-  0% {
-    opacity: 0.3;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.6;
-    transform: scale(1.1);
-  }
-  100% {
-    opacity: 0.3;
-    transform: scale(1);
-  }
-}
-.logo-img {
-  width: 100%;
-  max-width: 150px;
-  display: block;
-  margin: 0 auto 10px;
-  border-radius: 14px;
-}
-
-.hero-banner {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 20px;
-  background: linear-gradient(135deg, rgba(10,22,40,0.95), rgba(5,11,24,0.95));
-  border: 1px solid rgba(30,144,255,0.18);
-  border-radius: 18px;
-  padding: 22px;
-  margin-bottom: 16px;
-}
-
-.hero-left {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.hero-badge-box {
-  display: inline-block;
-  width: fit-content;
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,208,0,0.35);
-  color: #ffd000;
-  margin-bottom: 14px;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.hero-title {
-  font-size: 30px;
-  color: #ffd000;
-  margin-bottom: 10px;
-}
-
-.hero-text {
-  color: #1e90ff;
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-.hero-right {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hero-image-main {
-  width: 100%;
-  height: 230px;
-  object-fit: cover;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 0 20px rgba(30,144,255,0.12);
-}
-
-.hero-gallery {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-bottom: 20px;
-}
-
-.hero-thumb {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 0 14px rgba(255,59,59,0.08);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.hero-thumb:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 0 18px rgba(255,208,0,0.22);
-}
-
-@media (max-width: 900px) {
-  .hero-banner {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-gallery {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-title {
-    font-size: 24px;
-  }
-
-  .hero-image-main,
-  .hero-thumb {
-    height: auto;
-  }
-}
-/* HERO GRANDE */
-.hero-banner {
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.hero-banner img {
-  width: 100%;
-  border-radius: 15px;
-  box-shadow: 0 0 30px rgba(0,0,0,0.5);
-}
-
-/* GRID ABAJO */
-.banners-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  margin-bottom: 25px;
-}
-
-.banners-grid img {
-  width: 100%;
-  border-radius: 15px;
-  transition: 0.3s;
-  cursor: pointer;
-}
-
-.banners-grid img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(255,255,255,0.2);
-}
-.hero-banner {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 18px;
-  margin-bottom: 18px;
-  align-items: stretch;
-}
-
-.hero-banner img {
-  width: 100%;
-  height: 260px;
-  object-fit: cover;
-  border-radius: 18px;
-  display: block;
-}
-
-.banners-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  margin-bottom: 22px;
-}
-
-.banners-grid img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 18px;
-  display: block;
-}
-
-.logo-img {
-  width: 170px;
-  height: auto;
-  display: block;
-  margin: 0 auto 12px;
 }
 
 @media (max-width: 1100px) {
-  .hero-banner {
-    grid-template-columns: 1fr;
+  .dashboard-shell {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #222;
+  }
+
+  .main-content {
+    padding: 20px;
   }
 
   .hero-banner img {
@@ -583,5 +416,36 @@ RADAR ANIMATION
 
   .banners-grid img {
     height: 180px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .topbar-left {
+    align-items: flex-start;
+  }
+
+  .page-title {
+    font-size: 26px;
+  }
+
+  .hero-banner img {
+    height: 180px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .logo-img {
+    max-width: 130px;
   }
 }
