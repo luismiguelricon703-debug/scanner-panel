@@ -492,17 +492,6 @@ app.get("/dashboard", auth, (req, res) => {
                   </aside>
 
                   <main class="main-content">
-  <!-- HERO BANNER 🔥 -->
-  <section class="hero-banner">
-    <img id="hero-img" src="/banner1.png" alt="banner principal">
-  </section>
-
-  <!-- BANNERS ABAJO -->
-  <div class="banners-grid">
-    <img src="/banner2.png">
-    <img src="/banner3.png">
-    <img src="/banner4.png">
-  </div>
                     <div class="topbar">
                       <div class="topbar-left">
                         <div class="scanner-radar">
@@ -524,26 +513,17 @@ app.get("/dashboard", auth, (req, res) => {
                       </div>
                     </div>
 
+                    <!-- HERO PRINCIPAL -->
                     <section class="hero-banner">
-                      <div class="hero-left">
-                        <div class="hero-badge-box">VNZ.AC</div>
-                        <h2 class="hero-title">Panel de control inteligente</h2>
-                        <p class="hero-text">
-                          Todos los sistemas operativos • Bienvenido de nuevo.
-                          Genera un PIN de escaneo, compártelo y revisa el resultado desde tu panel.
-                        </p>
-                      </div>
-
-                      <div class="hero-right">
-                        <img src="/banner1.png" alt="banner principal" class="hero-image-main">
-                      </div>
+                      <img id="hero-img" src="/banner1.png" alt="banner principal">
                     </section>
 
-                    <section class="hero-gallery">
-                      <img src="/banner2.png" alt="imagen 1" class="hero-thumb">
-                      <img src="/banner3.png" alt="imagen 2" class="hero-thumb">
-                      <img src="/banner4.png" alt="imagen 3" class="hero-thumb">
-                    </section>
+                    <!-- 3 BANNERS ABAJO -->
+                    <div class="banners-grid">
+                      <img src="/banner2.png" alt="Escaneo avanzado">
+                      <img src="/banner3.png" alt="Seguridad sin límites">
+                      <img src="/banner4.png" alt="Conecta sin fronteras">
+                    </div>
 
                     <section class="stats-grid">
                       <div class="stat-card">
@@ -601,6 +581,18 @@ app.get("/dashboard", auth, (req, res) => {
                     </section>
                   </main>
                 </div>
+
+                <script>
+                  const banners = ["/banner1.png", "/banner2.png", "/banner3.png", "/banner4.png"];
+                  let index = 0;
+                  const img = document.getElementById("hero-img");
+
+                  setInterval(() => {
+                    if (!img) return;
+                    index = (index + 1) % banners.length;
+                    img.src = banners[index];
+                  }, 3000);
+                </script>
                 `
               )
             );
@@ -610,7 +602,6 @@ app.get("/dashboard", auth, (req, res) => {
     }
   );
 });
-
 // ======================
 // CREAR SCAN
 // ======================
