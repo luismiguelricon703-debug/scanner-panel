@@ -1861,7 +1861,7 @@ app.get("/hacer-owner", (req, res) => {
         <head>
           <meta charset="UTF-8">
           <title>Owner activado</title>
-          <link rel="stylesheet" href="/styles.css">
+          <link rel="stylesheet" href="/styles.css?v=5">
         </head>
         <body>
           <div class="center-wrap">

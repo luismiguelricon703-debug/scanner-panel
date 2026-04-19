@@ -462,3 +462,30 @@ td {
     max-width: 130px;
   }
 }
+.hero-banner img {
+  height: 140px !important;
+}
+
+.banners-grid img {
+  height: 90px !important;
+}
+/* 🔥 FIX FINAL TAMAÑO */
+.hero-banner {
+  max-width: 900px;
+  margin: 0 auto 15px auto;
+}
+
+.hero-banner img {
+  width: 100%;
+  height: 150px !important;
+  object-fit: cover;
+}
+
+.banners-grid {
+  max-width: 900px;
+  margin: 0 auto 20px auto;
+}
+
+.banners-grid img {
+  height: 100px !important;
+}
