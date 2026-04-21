@@ -500,7 +500,7 @@ app.get("/dashboard", auth, (req, res) => {
                         </div>
 
                         <div class="topbar-text">
-                          <h1 class="page-title">Dashboard</h1>
+                          <h1 class="page-title">VNZ.AC</h1>
                           <p class="page-subtitle">Panel privado de gestión de escaneos</p>
                         </div>
                       </div>
